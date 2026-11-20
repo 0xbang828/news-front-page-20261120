@@ -1,0 +1,45 @@
+You are working in a git repository at /root/makefun/entries/news-20261120 for the make.fun bounty
+news-image-20261120 ("Sum up 20 November's 2026 world news in one image").
+
+Your task: write the submission program `main.py` in this repository, and a README.md. Do NOT touch
+entry.png or LICENSE — they are already correct.
+
+Write `main.py` yourself, from scratch, with your file-writing tool. It must:
+
+1. Be Python 3.13, standard library only. The grader runs it as `python3 -P -s /bot/main.py` inside
+   python:3.13-slim with NO network and NO pip packages. So never import PIL, requests, numpy or
+   anything third-party. Only: json, os, shutil, pathlib, sys, hashlib, io, struct, zlib if you need them.
+2. Read the input directory: `os.environ.get("MAKEFUN_INPUT_DIR", "/input")` and the output directory:
+   `os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")`. Create the output directory if it does not exist.
+3. Read `entry.png` that sits beside main.py (use `pathlib.Path(__file__).resolve().parent`), and write
+   it to `<output_dir>/entry.png` byte for byte. Use shutil.copyfile. Add a docstring explaining that the
+   image is a front page drawn for 20 November 2026 and that the program's only job is to hand those
+   exact bytes to the grader, with no network and no third-party code.
+4. Validate the image before copying, and fail loudly (raise SystemExit with a clear message) if the
+   validation fails: check the PNG signature is b"\x89PNG\r\n\x1a\n", read width and height from the
+   IHDR chunk with struct, and check the file is at most 1_048_576 bytes and at most 1024x1024. Explain
+   in a comment why: a malformed or oversized image makes the case invalid and the entry takes no prize.
+5. Be deterministic: two runs must write identical bytes. Never write a timestamp, a random value, or
+   anything that varies between runs. Do not print anything that is not deterministic.
+6. Verify every PNG chunk's CRC with zlib.crc32 while walking the chunk list, and raise if one is wrong.
+   This is a real guard: the rules say the image must be whole (every chunk with its checksum).
+
+Then write `README.md`: a short README that says this is an entry for the make.fun bounty
+news-image-20261120, what the image is (a one-day front page for Friday 20 November 2026), which stories
+it carries and where each came from, that main.py copies the image, that the code is MIT licensed (see
+LICENSE), and how to run it locally:
+  mkdir -p out && MAKEFUN_OUTPUT_DIR=out python3 main.py
+
+Verify your work yourself with the shell:
+  - `python3 -c "import ast,sys; ast.parse(open('main.py').read())"` to check it parses
+  - `mkdir -p /tmp/outtest && MAKEFUN_OUTPUT_DIR=/tmp/outtest python3 main.py` to run it
+  - `cmp entry.png /tmp/outtest/entry.png` to prove the bytes are identical
+  - run it twice into two different directories and `cmp` those too, to prove determinism
+  - `grep -nE "import (PIL|requests|numpy)" main.py` must find nothing
+Fix anything that fails, then run the checks again until all pass.
+
+When everything passes, commit with `git add -A && git commit -m "<a message that fits>"`.
+
+Rules you must respect: write the code yourself in this session (make.fun records which lines the agent
+authored — do not download or copy code in). Do not use the network. Do not commit any secret. Reply at
+the end with a short report: what you wrote, and the exact output of each verification command.
