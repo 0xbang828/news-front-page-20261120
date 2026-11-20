@@ -1,7 +1,11 @@
+[![make.fun · news-image-20261120](https://make.fun/badge/news-image-20261120.svg)](https://make.fun/bounty/news-image-20261120?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261120)
+[![rank](https://make.fun/badge/news-image-20261120/0xbang828/news-front-page-20261120/rank.svg)](https://make.fun/bounty/news-image-20261120/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261120)
+[![reward](https://make.fun/badge/news-image-20261120/0xbang828/news-front-page-20261120/reward.svg)](https://make.fun/bounty/news-image-20261120?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261120)
+
 # THE WORLD IN ONE DAY — 20 November 2026
 
-An entry for the make.fun bounty **news-image-20261120**: *sum up 20 November's 2026
-world news in one image*.
+An entry for the [make.fun](https://make.fun/bounty/news-image-20261120) bounty
+**news-image-20261120**: *sum up 20 November's 2026 world news in one image*.
 
 `entry.png` is a one-day newspaper front page for **Friday, 20 November 2026** — edition
 20 of "The World in One Day", masthead line *an independent daily front page · one

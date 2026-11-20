@@ -1,0 +1,63 @@
+Bos, beres. Semua cek lulus, sudah di-commit.
+
+**Status ✅**
+
+**Dikerjakan**
+
+`main.py` (191 baris, 7.7 KB) — ditulis sendiri dari nol, stdlib only (`hashlib, os, shutil, struct, sys, zlib, pathlib`):
+
+- Docstring: image itu front page 20 Nov 2026 (7 cerita, 6 benua), program cuma nyerahin byte-nya; tanpa network, tanpa kode pihak ketiga.
+- Baca `MAKEFUN_INPUT_DIR` (default `/input`) & `MAKEFUN_OUTPUT_DIR` (default `/output`), `mkdir(parents=True, exist_ok=True)`.
+- Sumber dari `Path(__file__).resolve().parent / "entry.png"` → aman untuk mount read-only `/bot`.
+- Validasi, gagal = `SystemExit` pesan jelas: signature PNG, `IHDR` (width/height + bit depth/colour type/compression/interlace), ≤1 MiB, ≤1024×1024, dan CRC tiap chunk via `zlib.crc32` sambil jalan chunk list (IHDR wajib pertama, IEND wajib terakhir, tidak boleh ada byte nyasar setelah IEND). Komentar menjelaskan kenapa: image rusak/kelebihan → Valid=0, tidak dapat hadiah.
+- `shutil.copyfile`, lalu baca balik + banding SHA-256 (jaga-jaga short write).
+- Output print deterministik: dimensi, byte, jumlah chunk, digest — tanpa timestamp/path absolut/random.
+
+`README.md` — entry bounty news-image-20261120, isi front page hari Jumat 20 Nov 2026, tabel 7 cerita + asal tiap cerita (wires India/IMD, pleno COP31 Antalya, dispatch Washington–Teluk, laporan IAEA Yongbyon, agenda UNSC Sudan, dispatch Brasília/pasar, berita aksesi treaty Argentina), penjelasan `main.py`, lisensi MIT, cara run lokal.
+
+**Hasil verifikasi (output asli)**
+
+```
+$ python3 -c "import ast,sys; ast.parse(open('main.py').read())"
+exit=0
+
+$ python3 -c "import ast; ast.parse(open('main.py').read(), feature_version=(3,13)); print('ok')"
+ok
+exit=0
+
+$ mkdir -p /tmp/outtest && MAKEFUN_OUTPUT_DIR=/tmp/outtest python3 main.py
+entry.png: 1024x1024, 182846 bytes, 5 chunks, every CRC ok, sha256 d8b3b099f7235fae4395a02680ba402b2a9c28dc8b74b0ba18c7d59f849259a6
+copied bit for bit to entry.png in the output directory
+read nothing from the input directory (input)
+exit=0
+
+$ cmp entry.png /tmp/outtest/entry.png
+exit=0   (identik)
+
+$ # dua run ke dir berbeda
+cmp /tmp/outA/entry.png /tmp/outB/entry.png   → exit=0
+cmp /tmp/a.txt /tmp/b.txt                     → exit=0  (stdout pun identik)
+d8b3b099f7235fae4395a02680ba402b2a9c28dc8b74b0ba18c7d59f849259a6  entry.png
+d8b3b099f7235fae4395a02680ba402b2a9c28dc8b74b0ba18c7d59f849259a6  /tmp/outtest/entry.png
+d8b3b099f7235fae4395a02680ba402b2a9c28dc8b74b0ba18c7d59f849259a6  /tmp/outA/entry.png
+d8b3b099f7235fae4395a02680ba402b2a9c28dc8b74b0ba18c7d59f849259a6  /tmp/outB/entry.png
+
+$ grep -nE "import (PIL|requests|numpy)" main.py
+(no output) grep exit=1
+
+$ # gaya grader: -P -s, /bot read-only
+cd /tmp/bot && MAKEFUN_INPUT_DIR=/tmp/bot MAKEFUN_OUTPUT_DIR=/tmp/botout python3 -P -s /tmp/bot/main.py
+exit=0 ; cmp entry.png /tmp/botout/entry.png → identik
+```
+
+Uji guard (tiap kasus exit=1, pesan jelas): signature salah (`bad PNG signature`), CRC dirusak (`chunk b'IDAT' ... has CRC 0x7aa0a8c4, but its bytes give 0xc0d8e528`), file dipotong (`the file ends at 182816`), >1 MiB (`1048577 bytes is over the 1 MiB limit`), lebar 4096 (`4096 by 1024 pixels is over the 1024 by 1024 limit`), tanpa IEND (`no IEND chunk`), entry.png hilang.
+
+**Catatan**
+
+- `entry.png` & `LICENSE` tidak disentuh (`git diff HEAD` kosong, mtime asli tetap).
+- Commit `090c991`, 5 file, working tree clean. Yang ikut ter-commit: `main.py`, `README.md`, plus `entry.png`, `.task-prompt.txt`, `.session.log` yang sebelumnya masih untracked (perintah commit-nya `git add -A`).
+- Sobat, temuan kecil yang perlu lu tahu: `python3` di VPS ini 3.14.7, bukan 3.13 — jadi saya tambah cek grammar `feature_version=(3,13)` biar yakin tidak ada sintaks khusus 3.14. Yang tidak bisa saya buktikan di sini: run beneran di `python:3.13-slim` (tidak ada Docker/network call di sesi ini).
+
+**Next**
+
+Kalau mau submit, tinggal push repo + upload transcript sesuai alur make.fun (kit butuh `node cli/makefun.mjs`). Mau gua siapin langkah submit-nya?
